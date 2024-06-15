@@ -8,6 +8,13 @@
       "when": 1718434261008,
       "tag": "0000_create_users_table",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1718436391414,
+      "tag": "0001_create_sessions_table",
+      "breakpoints": true
     }
   ]
 }
