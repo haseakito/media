@@ -2,6 +2,7 @@ import {
     mysqlTable,
     varchar,
     text,
+    bigint,
     boolean,
     date,
     timestamp,
@@ -9,7 +10,7 @@ import {
 import { createId } from '@paralleldrive/cuid2';
 
 export const users = mysqlTable('users', {
-    id:  varchar("id", { length: 255 }).primaryKey().$defaultFn(() => createId()),
+    id: varchar("id", { length: 255 }).primaryKey().$defaultFn(() => createId()),
     name: varchar("name", { length: 30 }).notNull(),
     email: varchar("email", { length: 255 }).notNull().unique(),
     emailVerified: boolean("email_verified").default(false),
@@ -22,3 +23,14 @@ export const users = mysqlTable('users', {
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull().onUpdateNow()
 });
+
+export const sessions = mysqlTable("sessions", {
+    id: varchar("id", { length: 127 }).primaryKey(),
+    user_id: varchar("user_id", { length: 255 }).references(() => users.id),
+    activeExpires: bigint("active_expires", {
+		mode: "number"
+	}).notNull(),
+	idleExpires: bigint("idle_expires", {
+		mode: "number"
+	}).notNull()
+})
