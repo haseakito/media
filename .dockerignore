@@ -1,0 +1,32 @@
+# dependencies
+node_modules
+
+# Dockerfile
+Dockerfile*
+docker-compose*
+.dockerignore
+
+# git
+.git
+.gitignore
+
+# documents
+README.md
+LICENSE
+
+# vscode settings
+.vscode
+
+# scripts
+Makefile
+helm-charts
+
+# secrets
+.env
+
+# config
+.editorconfig
+.idea
+
+# testing
+coverage*
