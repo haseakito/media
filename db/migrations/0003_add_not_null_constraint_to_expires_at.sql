@@ -1,0 +1,1 @@
+ALTER TABLE `email_verification_table` MODIFY COLUMN `expires_at` timestamp NOT NULL;
