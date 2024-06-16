@@ -10,6 +10,7 @@
     "email": "email dev"
   },
   "dependencies": {
+    "@hono/zod-openapi": "^0.14.4",
     "@hono/zod-validator": "^0.2.2",
     "@lucia-auth/adapter-mysql": "^3.0.2",
     "@paralleldrive/cuid2": "^2.2.2",
