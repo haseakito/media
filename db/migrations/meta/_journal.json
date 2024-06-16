@@ -15,6 +15,13 @@
       "when": 1718436391414,
       "tag": "0001_create_sessions_table",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1718520694467,
+      "tag": "0002_create_email_verification_token_table",
+      "breakpoints": true
     }
   ]
 }
