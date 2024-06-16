@@ -2,9 +2,14 @@ import { cache } from "react";
 import { cookies } from "next/headers";
 import { Lucia, Session, TimeSpan, User } from "lucia";
 import { Mysql2Adapter } from "@lucia-auth/adapter-mysql";
-import { conn} from "@/db";
+import { conn, db } from "@/db";
+import { eq } from "drizzle-orm";
+import { email_verification_token } from "@/db/schema";
+import { createDate } from "oslo";
+import { alphabet, generateRandomString } from "oslo/crypto";
 
-// 
+
+//
 declare module "lucia" {
   interface Register {
     Lucia: typeof Lucia;
@@ -80,3 +85,31 @@ export const validateRequest = () =>
       return result;
     }
   );
+
+interface generateEmailVerificationCodeProps {
+  userId: string;
+  email: string;
+}
+
+export const generateEmailVerificationCode = async ({
+  userId,
+  email,
+}: generateEmailVerificationCodeProps): Promise<string> => {
+  // Delete the all previous email verification token
+  await db
+    .delete(email_verification_token)
+    .where(eq(email_verification_token.user_id, userId));
+
+  // Generate a new email verification code
+  const code = generateRandomString(8, alphabet("0-9", "A-Z"));
+
+  // Insert a new email verification token record
+  await db.insert(email_verification_token).values({
+    user_id: userId,
+    email: email,
+    code: code,
+    expiresAt: createDate(new TimeSpan(3, "h")),
+  });
+
+  return code;
+};
