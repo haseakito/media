@@ -33,25 +33,37 @@ export const users = mysqlTable(
   }
 );
 
-export const sessions = mysqlTable("sessions", {
-  id: varchar("id", { length: 127 }).primaryKey(),
-  user_id: varchar("user_id", { length: 255 }).references(() => users.id).notNull(),
-  activeExpires: bigint("active_expires", {
-    mode: "number",
-  }).notNull(),
-  idleExpires: bigint("idle_expires", {
-    mode: "number",
-  }).notNull(),
-});
+export const sessions = mysqlTable(
+  "sessions",
+  {
+    id: varchar("id", { length: 127 }).primaryKey(),
+    user_id: varchar("user_id", { length: 255 })
+      .references(() => users.id)
+      .notNull(),
+    activeExpires: bigint("active_expires", {
+      mode: "number",
+    }).notNull(),
+    idleExpires: bigint("idle_expires", {
+      mode: "number",
+    }).notNull(),
+  },
+  (table) => {
+    return {
+      userIdIdx: index("user_id_idx").on(table.user_id),
+    };
+  }
+);
 
 export const email_verification_token = mysqlTable(
-  "email_verification_table",
+  "email_verification_tokens",
   {
     id: varchar("id", { length: 255 })
       .primaryKey()
       .$defaultFn(() => createId()),
     code: varchar("code", { length: 8 }).notNull(),
-    user_id: varchar("user_id", { length: 255 }).references(() => users.id).notNull(),
+    user_id: varchar("user_id", { length: 255 })
+      .references(() => users.id)
+      .notNull(),
     email: varchar("email", { length: 255 }).notNull().unique(),
     expiresAt: timestamp("expires_at").notNull(),
   },
@@ -59,6 +71,25 @@ export const email_verification_token = mysqlTable(
     return {
       userIdIdx: index("user_id_idx").on(table.user_id),
       emailIdx: index("email_idx").on(table.email),
+    };
+  }
+);
+
+export const password_reset_token = mysqlTable(
+  "password_reset_tokens",
+  {
+    id: varchar("id", { length: 255 })
+      .primaryKey()
+      .$defaultFn(() => createId()),
+    token: varchar("token", { length: 40 }).notNull().unique(),
+    user_id: varchar("user_id", { length: 255 })
+      .references(() => users.id)
+      .notNull(),
+    expiresAt: timestamp("expires_at").notNull(),
+  },
+  (table) => {
+    return {
+      userIdIdx: index("user_id_idx").on(table.user_id),
     };
   }
 );
