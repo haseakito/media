@@ -1,11 +1,11 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "30fa6a64-a22a-4415-ada6-c5025717c6a6",
+  "id": "ba652a8d-6c3d-49da-b161-04dd35d1804a",
   "prevId": "1b92d83a-1b12-4c5a-b47b-49a9c48d1c4c",
   "tables": {
-    "email_verification_table": {
-      "name": "email_verification_table",
+    "email_verification_tokens": {
+      "name": "email_verification_tokens",
       "columns": {
         "id": {
           "name": "id",
@@ -25,7 +25,7 @@
           "name": "user_id",
           "type": "varchar(255)",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "email": {
@@ -39,7 +39,7 @@
           "name": "expires_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         }
       },
@@ -60,9 +60,9 @@
         }
       },
       "foreignKeys": {
-        "email_verification_table_user_id_users_id_fk": {
-          "name": "email_verification_table_user_id_users_id_fk",
-          "tableFrom": "email_verification_table",
+        "email_verification_tokens_user_id_users_id_fk": {
+          "name": "email_verification_tokens_user_id_users_id_fk",
+          "tableFrom": "email_verification_tokens",
           "tableTo": "users",
           "columnsFrom": [
             "user_id"
@@ -75,16 +75,16 @@
         }
       },
       "compositePrimaryKeys": {
-        "email_verification_table_id": {
-          "name": "email_verification_table_id",
+        "email_verification_tokens_id": {
+          "name": "email_verification_tokens_id",
           "columns": [
             "id"
           ]
         }
       },
       "uniqueConstraints": {
-        "email_verification_table_email_unique": {
-          "name": "email_verification_table_email_unique",
+        "email_verification_tokens_email_unique": {
+          "name": "email_verification_tokens_email_unique",
           "columns": [
             "email"
           ]
@@ -105,7 +105,7 @@
           "name": "user_id",
           "type": "varchar(255)",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "active_expires": {
@@ -123,7 +123,15 @@
           "autoincrement": false
         }
       },
-      "indexes": {},
+      "indexes": {
+        "user_id_idx": {
+          "name": "user_id_idx",
+          "columns": [
+            "user_id"
+          ],
+          "isUnique": false
+        }
+      },
       "foreignKeys": {
         "sessions_user_id_users_id_fk": {
           "name": "sessions_user_id_users_id_fk",
