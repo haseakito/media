@@ -2,8 +2,12 @@ import { OpenAPIHono } from "@hono/zod-openapi";
 import signup from "./register";
 import login from "./login";
 import verifyEmail from "./verify-email";
+import resetPassword from "./reset-password";
+import updatePassword from "./update-password";
 
 export const authRoutes = new OpenAPIHono()
   .route("/", signup)
   .route("/", login)
-  .route("/", verifyEmail);
+  .route("/", verifyEmail)
+  .route("/", resetPassword)
+  .route("/", updatePassword);
