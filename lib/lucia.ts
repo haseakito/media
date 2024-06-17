@@ -1,13 +1,19 @@
 import { cache } from "react";
 import { cookies } from "next/headers";
-import { Lucia, Session, TimeSpan, User } from "lucia";
+import {
+  Lucia,
+  User,
+  Session,
+  TimeSpan,
+  generateIdFromEntropySize,
+} from "lucia";
 import { Mysql2Adapter } from "@lucia-auth/adapter-mysql";
 import { conn, db } from "@/db";
 import { eq } from "drizzle-orm";
-import { email_verification_token } from "@/db/schema";
+import { email_verification_token, password_reset_token } from "@/db/schema";
 import { createDate } from "oslo";
-import { alphabet, generateRandomString } from "oslo/crypto";
-
+import { encodeHex } from "oslo/encoding";
+import { alphabet, sha256, generateRandomString } from "oslo/crypto";
 
 //
 declare module "lucia" {
@@ -112,4 +118,39 @@ export const generateEmailVerificationCode = async ({
   });
 
   return code;
+};
+
+interface generatePasswordResetTokenProps {
+  userId: string;
+}
+
+export const generatePasswordResetToken = async ({
+  userId,
+}: generatePasswordResetTokenProps) => {
+  // Delete the all previous password reset token
+  await db
+    .delete(password_reset_token)
+    .where(eq(password_reset_token.user_id, userId));
+
+  // Generate token id
+  const tokenId = generateIdFromEntropySize(25);
+
+  // Hash the token
+  const tokenHash = await hashToken(tokenId);
+
+  // insert a new password reset token record
+  await db.insert(password_reset_token).values({
+    token: tokenHash,
+    user_id: userId,
+    expiresAt: createDate(new TimeSpan(2, "h")),
+  });
+
+  return tokenId;
+};
+
+export const hashToken = async (tokenId: string) => {
+  // Hash the verification token
+  const tokenHash = encodeHex(await sha256(new TextEncoder().encode(tokenId)));
+
+  return tokenHash;
 };
