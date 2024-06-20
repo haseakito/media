@@ -6,6 +6,7 @@ import {
   boolean,
   date,
   timestamp,
+  primaryKey,
   index,
 } from "drizzle-orm/mysql-core";
 import { createId } from "@paralleldrive/cuid2";
@@ -15,9 +16,10 @@ export const users = mysqlTable(
   {
     id: varchar("id", { length: 255 }).primaryKey(),
     name: varchar("name", { length: 30 }).notNull(),
+    username: varchar("username", { length: 30 }),
     email: varchar("email", { length: 255 }).notNull().unique(),
     emailVerified: boolean("email_verified").notNull().default(false),
-    password: varchar("password", { length: 255 }).notNull(),
+    password: varchar("password", { length: 255 }),
     bio: text("bio"),
     link: varchar("link", { length: 255 }),
     dob: date("dob"),
@@ -29,6 +31,28 @@ export const users = mysqlTable(
   (table) => {
     return {
       emailIdx: index("email_idx").on(table.email),
+    };
+  }
+);
+
+export const accounts = mysqlTable(
+  "accounts",
+  {
+    providerId: varchar("provider_id", { length: 255 }).notNull(),
+    providerAccountId: varchar("provider_account_id", {
+      length: 255,
+    }).notNull(),
+    user_id: varchar("user_id", { length: 255 })
+      .references(() => users.id)
+      .notNull(),
+  },
+  (table) => {
+    return {
+      pk: primaryKey({ columns: [table.providerId, table.providerAccountId] }),
+      providerAccountIdIdx: index("provider_account_id_idx").on(
+        table.providerAccountId
+      ),
+      userIdIdx: index("user_id_idx").on(table.user_id),
     };
   }
 );
