@@ -29,6 +29,13 @@
       "when": 1718633704351,
       "tag": "0003_create_password_reset_tokens_table",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1718916745956,
+      "tag": "0004_create_accounts_table",
+      "breakpoints": true
     }
   ]
 }
