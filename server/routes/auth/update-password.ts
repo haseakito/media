@@ -1,10 +1,10 @@
 import { db } from "@/db";
-import { password_reset_token, users } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { hashToken, lucia } from "@/lib/lucia";
+import { password_reset_token, users } from "@/db/schema";
+import { setCookie } from "hono/cookie";
 import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi";
+import { hashToken, lucia } from "@/lib/lucia";
 import { isWithinExpirationDate } from "oslo";
-import { cookies } from "next/headers";
 
 const paramSchema = z.object({
   tokenId: z.string(),
@@ -40,54 +40,54 @@ const app = new OpenAPIHono().openapi(
       },
     },
     responses: {
-        200: {
-            description: "Password update successfully",
-            content: {
-              "application/json": {
-                schema: z
-                  .object({
-                    message: z.string(),
-                  })
-                  .openapi({
-                    example: {
-                      message: "Password update successfully",
-                    },
-                  }),
-              },
-            },
+      200: {
+        description: "Password update successfully",
+        content: {
+          "application/json": {
+            schema: z
+              .object({
+                message: z.string(),
+              })
+              .openapi({
+                example: {
+                  message: "Password update successfully",
+                },
+              }),
           },
-          400: {
-            description: "Unauthorized to reset password",
-            content: {
-              "application/json": {
-                schema: z
-                  .object({
-                    message: z.string(),
-                  })
-                  .openapi({
-                    example: {
-                      message: "Unauthorized to reset password",
-                    },
-                  }),
-              },
-            },
+        },
+      },
+      400: {
+        description: "Unauthorized to reset password",
+        content: {
+          "application/json": {
+            schema: z
+              .object({
+                message: z.string(),
+              })
+              .openapi({
+                example: {
+                  message: "Unauthorized to reset password",
+                },
+              }),
           },
-          500: {
-            description: "Failed to update password",
-            content: {
-              "application/json": {
-                schema: z
-                  .object({
-                    message: z.string(),
-                  })
-                  .openapi({
-                    example: {
-                      message: "Failed to update password",
-                    },
-                  }),
-              },
-            },
+        },
+      },
+      500: {
+        description: "Failed to update password",
+        content: {
+          "application/json": {
+            schema: z
+              .object({
+                message: z.string(),
+              })
+              .openapi({
+                example: {
+                  message: "Failed to update password",
+                },
+              }),
           },
+        },
+      },
     },
   }),
   async (c) => {
@@ -128,7 +128,8 @@ const app = new OpenAPIHono().openapi(
       const sessionCookie = lucia.createSessionCookie(session.id);
 
       // Set the session in cookie
-      cookies().set(
+      setCookie(
+        c,
         sessionCookie.name,
         sessionCookie.value,
         sessionCookie.attributes

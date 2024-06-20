@@ -1,9 +1,9 @@
 import { db } from "@/db";
 import { eq } from "drizzle-orm";
 import { users, email_verification_token } from "@/db/schema";
-import { lucia } from "@/lib/lucia";
-import { cookies } from "next/headers";
+import { setCookie } from "hono/cookie";
 import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi";
+import { lucia } from "@/lib/lucia";
 import { isWithinExpirationDate } from "oslo";
 
 const querySchema = z.object({
@@ -75,7 +75,7 @@ const app = new OpenAPIHono().openapi(
     },
   }),
   async (c) => {
-    //
+    // Extract the cookie from context
     const { code } = c.req.valid("query");
 
     // Start a database transaction
@@ -122,7 +122,8 @@ const app = new OpenAPIHono().openapi(
         const sessionCookie = lucia.createSessionCookie(session.id);
 
         // Set the session in cookie
-        cookies().set(
+        setCookie(
+          c,
           sessionCookie.name,
           sessionCookie.value,
           sessionCookie.attributes
