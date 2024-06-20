@@ -1,36 +1,6 @@
 version: '3.9'
 
 services:
-  app:
-    container_name: media_app
-    build:
-      context: .
-      dockerfile: Dockerfile.dev
-    ports:
-      - 3000:3000
-    volumes:
-      - .:/user/src/app
-      - /usr/src/app/node_modules
-    depends_on:
-      mysql:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    networks:
-      - media
-
-  web:
-    container_name: media_web
-    image: nginx:alpine
-    ports:
-      - 8080:8080
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
-    depends_on:
-      - app
-    networks:
-      - media
-  
   mysql:
     container_name: media_db
     image: mysql:8.0
