@@ -36,6 +36,13 @@
       "when": 1718916745956,
       "tag": "0004_create_accounts_table",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1719172576465,
+      "tag": "0005_add_role_to_users",
+      "breakpoints": true
     }
   ]
 }

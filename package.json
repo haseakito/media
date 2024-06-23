@@ -10,6 +10,7 @@
     "db:generate": "drizzle-kit generate --name $migration_file_name",
     "db:migrate": "bun ./scripts/migrate.ts",
     "db:studio": "drizzle-kit studio",
+    "db:seed": "bun ./scripts/seed.ts",
     "email": "email dev"
   },
   "dependencies": {
@@ -23,6 +24,7 @@
     "bullmq": "^5.8.2",
     "dotenv": "^16.4.5",
     "drizzle-orm": "^0.31.2",
+    "drizzle-zod": "^0.5.1",
     "hono": "^4.4.6",
     "ioredis": "^5.4.1",
     "lucia": "^3.2.0",
@@ -32,9 +34,11 @@
     "react": "^18",
     "react-dom": "^18",
     "resend": "^3.3.0",
+    "zlib": "^1.0.5",
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@faker-js/faker": "^8.4.1",
     "@types/bun": "^1.1.4",
     "@types/react": "^18",
     "@types/react-dom": "^18",
