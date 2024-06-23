@@ -1,14 +1,16 @@
 import {
   mysqlTable,
+  primaryKey,
+  index,
   varchar,
   text,
   bigint,
   boolean,
   date,
   timestamp,
-  primaryKey,
-  index,
+  mysqlEnum,
 } from "drizzle-orm/mysql-core";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { createId } from "@paralleldrive/cuid2";
 
 export const users = mysqlTable(
@@ -25,6 +27,7 @@ export const users = mysqlTable(
     dob: date("dob"),
     profileImage: varchar("profile_image", { length: 255 }),
     coverImage: varchar("cover_image", { length: 255 }),
+    role: mysqlEnum("role", ["ADMIN", "USER"]).notNull().default("USER"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull().onUpdateNow(),
   },
@@ -117,3 +120,7 @@ export const password_reset_token = mysqlTable(
     };
   }
 );
+
+// Export schemas
+export const selectUserSchema = createSelectSchema(users);
+export const insertUserSchema = createInsertSchema(users);
