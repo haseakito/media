@@ -1,12 +1,6 @@
 import { Job, Queue, Worker } from "bullmq";
 import { emailProcessors } from "./worker";
-
-import Redis from "ioredis";
-
-// Instantiate a new Redis client
-const connection = new Redis(process.env.REDIS_HOST!, {
-  maxRetriesPerRequest: null,
-});
+import connection from "./redis"
 
 // Define the properties for createQueue
 interface createQueueProps {
