@@ -18,15 +18,16 @@ import { alphabet, sha256, generateRandomString } from "oslo/crypto";
 //
 declare module "lucia" {
   interface Register {
-    Lucia: typeof Lucia;
+    Lucia: typeof lucia;
     DatabaseUserAttributes: DatabaseUserAttributes;
   }
 
   interface DatabaseUserAttributes {
     id: string;
     email: string;
-    email_verified: boolean;
-    profile_image: string | null;
+    emailVerified: boolean;
+    profileImage: string | null;
+    role: "ADMIN" | "USER";
   }
 }
 
@@ -42,8 +43,9 @@ export const lucia = new Lucia(adapter, {
     return {
       id: attributes.id,
       email: attributes.email,
-      email_verified: attributes.email_verified,
-      profile_image: attributes.profile_image,
+      emailVerified: attributes.emailVerified,
+      profileImage: attributes.profileImage,
+      role: attributes.role,
     };
   },
   sessionExpiresIn: new TimeSpan(2, "w"),
@@ -71,7 +73,7 @@ export const validateRequest = () =>
       const result = await lucia.validateSession(sessionId);
       // next.js throws when you attempt to set cookie when rendering page
       try {
-        if (result.session && result.session.fresh) {
+        if (result.session && result.session.fresh) {          
           const sessionCookie = lucia.createSessionCookie(result.session.id);
           cookies().set(
             sessionCookie.name,
@@ -79,7 +81,7 @@ export const validateRequest = () =>
             sessionCookie.attributes
           );
         }
-        if (!result.session) {
+        if (!result.session) {        
           const sessionCookie = lucia.createBlankSessionCookie();
           cookies().set(
             sessionCookie.name,
